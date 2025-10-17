@@ -9,8 +9,11 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", ip: "192.168.56.10"
 
   # 安裝 Docker
-  config.vm.provision "shell", path: "install-docker.sh"
+  config.vm.provision "docker_install", type: "shell", path: "install-docker.sh"
 
   # 安裝 Kafka
-  config.vm.provision "shell", path: "install-kafka.sh", privileged: false
+  config.vm.provision "kafka_install", type: "shell", path: "install-kafka.sh", privileged: false
+
+  # 安裝 Redis
+  config.vm.provision "redis_install", type: "shell", path: "install-redis.sh"
 end
