@@ -43,7 +43,6 @@ __screenshots__/
 Thumbs.db
 
 
-# vagrant
-.vagrant/
-
-__pycache__/
+**/.vagrant/
+**/__pycache__/
+**/venv/

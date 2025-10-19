@@ -1,10 +1,10 @@
 # backend/aggregator.py
 from kafka import KafkaConsumer
 from redis import Redis
-import json, time, datetime, os
+import json, datetime, os
 
 KAFKA_BROKER = os.getenv("KAFKA_BROKER", "192.168.56.10:9092")
-TOPIC = os.getenv("KAFKA_TOPIC", "test-topic")
+TOPIC = os.getenv("KAFKA_TOPIC", "iot-data")
 
 redis_client = Redis(host="192.168.56.10", port=6379, decode_responses=True)
 

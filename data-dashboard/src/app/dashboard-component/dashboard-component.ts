@@ -8,6 +8,6 @@ import { LiveService } from '../live-service';
   styleUrl: './dashboard-component.scss'
 })
 export class DashboardComponent {
-  data:any[] = [];
-  constructor(ls: LiveService) { ls.data$.subscribe(v => this.data = v); }
+  // data:any[] = [];
+  // constructor(ls: LiveService) { ls.data$.subscribe(v => this.data = v); }
 }

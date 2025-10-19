@@ -1,7 +1,7 @@
 # install_kafka.sh
 #!/bin/bash
 
-docker run -d  \
+sudo docker run -d  \
   --name broker \
   -p 9092:9092 \
   -e KAFKA_NODE_ID=1 \

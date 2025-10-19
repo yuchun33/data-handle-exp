@@ -8,7 +8,7 @@ producer = KafkaProducer(
     value_serializer=lambda v: json.dumps(v).encode("utf-8"),
 )
 
-topic = "test-topic"
+topic = "iot-data"
 
 # 建立 300 個 feeder id（F1..F300）
 feeder_ids = [f"F{i}" for i in range(1, 301)]
@@ -69,7 +69,7 @@ def produce_line_data(lineId):
                 if not fid:
                     continue  # skip sending if no feeder installed at this position
                 info = feeder_table[fid]
-                status = "NG" if random.random() < 0.0001 else "OK"
+                status = "NG" if random.random() < 0.1 else "OK"
                 data = {
                     "id": str(uuid.uuid4()),
                     "ts": datetime.datetime.utcnow().isoformat(),
