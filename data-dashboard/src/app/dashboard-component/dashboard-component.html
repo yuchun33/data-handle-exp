@@ -1,12 +1,14 @@
-<p>dashboard-component works!</p>
-  <!-- <h2>置件機即時累積</h2>
-  <table border="1" cellpadding="5">
-    <tr><th>機台</th><th>Total</th><th>OK</th><th>NG</th></tr>
-    <tr *ngFor="let row of data">
-      <td>{{row.machineId}}</td>
-      <td>{{row.total}}</td>
-      <td>{{row.ok}}</td>
-      <td>{{row.ng}}</td>
-    </tr>
-  </table> -->
-  <!-- <button pButton type="button" label="Click"></button> -->
+<div class="flex flex-col">
+  <div class="m-4">
+    <h1 class="text-xl font-bold">LINE 1</h1>
+    <app-chart-component></app-chart-component>
+  </div>
+  <div class="m-4">
+    <h1 class="text-xl font-bold">LINE 2</h1>
+    <app-chart-component></app-chart-component>
+  </div>
+  <div class="m-4">
+    <h1 class="text-xl font-bold">LINE 3</h1>
+    <app-chart-component></app-chart-component>
+  </div>
+</div>
