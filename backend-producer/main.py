@@ -58,7 +58,9 @@ def get_feeder_info():
     info = feeder_table[fid]
     return fid, info["pn"], info["fifo"]
 
+
 print("Starting to send data...")
+
 
 def produce_line_data(lineId):
     while True:
@@ -83,11 +85,11 @@ def produce_line_data(lineId):
                     "status": status,
                 }
 
-                try:    
+                try:
                     producer.send(topic, value=data)
                     producer.flush()
                     print(f"Sent data: {data}")
-                except Exception as e:  
+                except Exception as e:
                     print(f"Error sending data: {e}")
 
                 time.sleep(1)

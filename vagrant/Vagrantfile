@@ -16,4 +16,7 @@ Vagrant.configure("2") do |config|
 
   # 安裝 Redis
   config.vm.provision "redis_install", type: "shell", path: "install-redis.sh"
+
+  # 安裝 MQTT
+  config.vm.provision "mqtt_install", type: "shell", path: "install-mqtt.sh"
 end

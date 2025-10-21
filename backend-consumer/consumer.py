@@ -2,20 +2,28 @@
 from kafka import KafkaConsumer
 from redis import Redis
 import json, datetime, os
+import paho.mqtt.client as mqtt
 
 KAFKA_BROKER = os.getenv("KAFKA_BROKER", "192.168.56.10:9092")
-TOPIC = os.getenv("KAFKA_TOPIC", "iot-data")
-
-redis_client = Redis(host="192.168.56.10", port=6379, decode_responses=True)
+KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "iot-data")
 
 consumer = KafkaConsumer(
-    TOPIC,
+    KAFKA_TOPIC,
     bootstrap_servers=[KAFKA_BROKER],
     value_deserializer=lambda m: json.loads(m.decode("utf-8")),
     auto_offset_reset="latest",
     enable_auto_commit=True,
     group_id="aggregator",
 )
+
+MQTT_BROKER = "192.168.56.10"
+PORT = 1883
+MQTT_TOPIC = "iot-data"
+
+client = mqtt.Client()
+client.connect(MQTT_BROKER, PORT, 60)
+
+redis_client = Redis(host="192.168.56.10", port=6379, decode_responses=True)
 
 
 def get_key(machine_id):
@@ -50,14 +58,31 @@ def update_slot_counter(message):
             redis_client.hincrby(slot_key, "ng", 1)
 
         # 設置最後更新時間
-        redis_client.hset(slot_key, "last_updated", datetime.datetime.utcnow().isoformat())
+        redis_client.hset(
+            slot_key, "last_updated", datetime.datetime.utcnow().isoformat()
+        )
 
         # 讀取並印出累積數量
         counters = redis_client.hgetall(slot_key)
         total = counters.get("total", "0")
         ok_count = counters.get("ok", "0")
         ng_count = counters.get("ng", "0")
-        print(f"Updated counter for {slot_key} - total={total}, ok={ok_count}, ng={ng_count}")
+
+        # 組裝要發佈的資料並以 JSON 發佈到 MQTT
+        payload = json.dumps(
+            {
+                "line": line_id,
+                "module": module_id,
+                "slot": slot_id,
+                "ok": ok_count,
+                "ng": ng_count,
+            }
+        )
+        client.publish(MQTT_TOPIC, payload)
+
+        print(
+            f"Updated counter for {slot_key} - total={total}, ok={ok_count}, ng={ng_count}"
+        )
 
     except Exception as e:
         print(f"Error processing message: {e}")

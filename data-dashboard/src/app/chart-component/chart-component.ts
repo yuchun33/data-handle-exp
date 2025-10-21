@@ -10,6 +10,7 @@ import { ChartModule } from 'primeng/chart';
 })
 export class ChartComponent implements OnInit {
   basicData: any;
+  intervalId: any;
 
   basicOptions: any;
 
@@ -21,22 +22,49 @@ export class ChartComponent implements OnInit {
     this.initChart();
   }
 
+  ngOnChanges() {
+    console.log('changes');
+  }
+
   initChart() {
     if (isPlatformBrowser(this.platformId)) {
       const documentStyle = getComputedStyle(document.documentElement);
       const textColor = documentStyle.getPropertyValue('--p-text-color');
       const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
       const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+      const data: { key: string; ok: number; ng: number }[] = [];
+
+      for (let m = 1; m <= 6; m++) {
+        for (let s = 1; s <= 6; s++) {
+          const key = `ms-${m}-${s}`;
+          const ok = Math.floor(Math.random() * 50) + 50;
+          const ng = Math.floor(Math.random() * 1) + 5;
+          data.push({ key, ok, ng });
+        }
+      }
 
       this.basicData = {
-        labels: Array.from({ length: 20 }, (_, i) => `${i + 1}`),
         datasets: [
           {
-            // label: ',
-            data: Array.from({ length: 20 }, () => Math.floor(Math.random() * (60 - 10 + 1)) + 10),
-            backgroundColor: Array.from({ length: 20 }, () => 'rgba(68, 241, 11, 1)'),
-            borderColor: Array.from({ length: 20 }, () => 'rgba(255, 255, 255, 1)'),
+            label: 'ok',
+            data: data,
+            backgroundColor: 'rgba(68, 241, 11, 1)',
+            // borderColor: 'rgba(255, 255, 255, 1)',
             borderWidth: 1,
+            parsing: {
+              xAxisKey: 'key',
+              yAxisKey: 'ok',
+            },
+          },
+          {
+            label: 'ng',
+            data: data,
+            backgroundColor: 'rgba(255, 151, 142, 1)',
+            // borderColor: 'rgba(255, 255, 255, 1)',
+            parsing: {
+              xAxisKey: 'key',
+              yAxisKey: 'ng',
+            },
           },
         ],
       };
@@ -47,8 +75,7 @@ export class ChartComponent implements OnInit {
           legend: {
             display: false,
             // labels: {
-            //   // color: textColor,
-
+            //   color: textColor,
             // },
           },
         },
