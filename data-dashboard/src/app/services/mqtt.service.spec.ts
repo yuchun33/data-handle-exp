@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LiveService } from './live-service';
+import { MqttService } from './mqtt.service';
 
-describe('LiveService', () => {
-  let service: LiveService;
+describe('MqttService', () => {
+  let service: MqttService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(LiveService);
+    service = TestBed.inject(MqttService);
   });
 
   it('should be created', () => {

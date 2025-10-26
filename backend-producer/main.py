@@ -31,7 +31,7 @@ selected_feeders = random.sample(list(feeder_table.keys()), 50)
 # 準備所有可能的安裝位置（3 條 line，每條 6 個 module，每個 module 16 個 slot）
 lines = [f"LINE-{i + 1}" for i in range(3)]
 all_positions = [
-    (line, module, slot) for line in lines for module in range(6) for slot in range(16)
+    (line, module, slot) for line in lines for module in range(6) for slot in range(6)
 ]
 print(all_positions)
 
@@ -92,7 +92,7 @@ def produce_line_data(lineId):
                 except Exception as e:
                     print(f"Error sending data: {e}")
 
-                time.sleep(1)
+                time.sleep(10)
 
 
 threads = []
@@ -105,6 +105,6 @@ for lineId in lines:
 # 保持主程序運行
 try:
     while True:
-        time.sleep(1)
+        time.sleep(10)
 except KeyboardInterrupt:
     print("Shutting down...")

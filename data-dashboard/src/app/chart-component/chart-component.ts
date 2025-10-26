@@ -1,5 +1,13 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectorRef, Component, effect, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  effect,
+  inject,
+  OnInit,
+  PLATFORM_ID,
+  input,
+} from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 
 @Component({
@@ -9,11 +17,10 @@ import { ChartModule } from 'primeng/chart';
   imports: [ChartModule],
 })
 export class ChartComponent implements OnInit {
-  basicData: any;
-  intervalId: any;
-
+  basicChart: any;
   basicOptions: any;
-
+  intervalId: any;
+  data = input<any[]>();
   platformId = inject(PLATFORM_ID);
 
   constructor(private cd: ChangeDetectorRef) {}
@@ -22,32 +29,18 @@ export class ChartComponent implements OnInit {
     this.initChart();
   }
 
-  ngOnChanges() {
-    console.log('changes');
-  }
-
   initChart() {
     if (isPlatformBrowser(this.platformId)) {
       const documentStyle = getComputedStyle(document.documentElement);
       const textColor = documentStyle.getPropertyValue('--p-text-color');
       const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
       const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-      const data: { key: string; ok: number; ng: number }[] = [];
 
-      for (let m = 1; m <= 6; m++) {
-        for (let s = 1; s <= 6; s++) {
-          const key = `ms-${m}-${s}`;
-          const ok = Math.floor(Math.random() * 50) + 50;
-          const ng = Math.floor(Math.random() * 1) + 5;
-          data.push({ key, ok, ng });
-        }
-      }
-
-      this.basicData = {
+      this.basicChart = {
         datasets: [
           {
             label: 'ok',
-            data: data,
+            data: this.data(),
             backgroundColor: 'rgba(68, 241, 11, 1)',
             // borderColor: 'rgba(255, 255, 255, 1)',
             borderWidth: 1,
@@ -58,7 +51,7 @@ export class ChartComponent implements OnInit {
           },
           {
             label: 'ng',
-            data: data,
+            data: this.data(),
             backgroundColor: 'rgba(255, 151, 142, 1)',
             // borderColor: 'rgba(255, 255, 255, 1)',
             parsing: {
