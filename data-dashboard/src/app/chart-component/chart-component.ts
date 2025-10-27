@@ -23,10 +23,42 @@ export class ChartComponent implements OnInit {
   data = input<any[]>();
   platformId = inject(PLATFORM_ID);
 
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor(private cd: ChangeDetectorRef) {
+    effect(() => {
+      this.updateChartData();
+    });
+  }
 
   ngOnInit() {
     this.initChart();
+  }
+
+  updateChartData() {
+    this.basicChart = {
+      datasets: [
+        {
+          label: 'ok',
+          data: this.data(),
+          backgroundColor: 'rgba(68, 241, 11, 1)',
+          // borderColor: 'rgba(255, 255, 255, 1)',
+          borderWidth: 1,
+          parsing: {
+            xAxisKey: 'key',
+            yAxisKey: 'ok',
+          },
+        },
+        {
+          label: 'ng',
+          data: this.data(),
+          backgroundColor: 'rgba(255, 151, 142, 1)',
+          // borderColor: 'rgba(255, 255, 255, 1)',
+          parsing: {
+            xAxisKey: 'key',
+            yAxisKey: 'ng',
+          },
+        },
+      ],
+    };
   }
 
   initChart() {
@@ -36,31 +68,7 @@ export class ChartComponent implements OnInit {
       const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
       const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
 
-      this.basicChart = {
-        datasets: [
-          {
-            label: 'ok',
-            data: this.data(),
-            backgroundColor: 'rgba(68, 241, 11, 1)',
-            // borderColor: 'rgba(255, 255, 255, 1)',
-            borderWidth: 1,
-            parsing: {
-              xAxisKey: 'key',
-              yAxisKey: 'ok',
-            },
-          },
-          {
-            label: 'ng',
-            data: this.data(),
-            backgroundColor: 'rgba(255, 151, 142, 1)',
-            // borderColor: 'rgba(255, 255, 255, 1)',
-            parsing: {
-              xAxisKey: 'key',
-              yAxisKey: 'ng',
-            },
-          },
-        ],
-      };
+      this.updateChartData();
 
       this.basicOptions = {
         maintainAspectRatio: false,

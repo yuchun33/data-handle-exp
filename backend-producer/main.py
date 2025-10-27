@@ -1,5 +1,8 @@
 from kafka import KafkaProducer
-import json, time, datetime, uuid
+import json
+import time
+import datetime
+import uuid
 import random
 import threading
 
@@ -42,7 +45,7 @@ chosen_positions = random.sample(all_positions, len(selected_feeders))
 installation = {}  # installation[line][module][slot] = feederId
 feeder_position = {}  # feeder_position[feederId] = (line, module, slot)
 
-for fid, (line, module, slot) in zip(selected_feeders, chosen_positions):
+for fid, (line, module, slot) in zip(selected_feeders, chosen_positions, strict=True):
     installation.setdefault(line, {}).setdefault(module, {})[slot] = fid
     feeder_position[fid] = (line, module, slot)
 
@@ -66,7 +69,7 @@ def produce_line_data(lineId):
     while True:
         # productName = random.choice(["WidgetA", "WidgetB", "WidgetC", "WidgetD"])
         for moduleId in range(6):
-            for slotId in range(16):
+            for slotId in range(6):
                 fid = feeder_at(lineId, moduleId, slotId)
                 if not fid:
                     continue  # skip sending if no feeder installed at this position
@@ -92,7 +95,7 @@ def produce_line_data(lineId):
                 except Exception as e:
                     print(f"Error sending data: {e}")
 
-                time.sleep(10)
+                time.sleep(1)
 
 
 threads = []

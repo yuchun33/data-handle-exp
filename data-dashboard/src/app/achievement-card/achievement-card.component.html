@@ -1,0 +1,5 @@
+<div class="h-full grow grid content-center">
+  <div class="text-4xl text-center">
+    {{ ((iotAchievement() ?? 0) / 60) * 100 | number : '1.1-1' }}%
+  </div>
+</div>

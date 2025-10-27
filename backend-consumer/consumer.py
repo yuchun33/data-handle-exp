@@ -1,7 +1,9 @@
 # backend/aggregator.py
 from kafka import KafkaConsumer
 from redis import Redis
-import json, datetime, os
+import json
+import datetime
+import os
 import paho.mqtt.client as mqtt
 
 KAFKA_BROKER = os.getenv("KAFKA_BROKER", "192.168.56.10:9092")
@@ -19,6 +21,7 @@ consumer = KafkaConsumer(
 MQTT_BROKER = "192.168.56.10"
 PORT = 1883
 MQTT_TOPIC = "iot-data"
+MQTT_ACHIEVEMENT_TOPIC = "iot-achievement"
 
 client = mqtt.Client()
 client.connect(MQTT_BROKER, PORT, 60)
@@ -34,6 +37,10 @@ def get_key(machine_id):
 def get_slot_key(line_id, module_id, slot_id):
     """生成 Redis key"""
     return f"slot_counter:{line_id}:{module_id}:{slot_id}"
+
+
+def get_line_key(line_id):
+    return f"achievements:{line_id}"
 
 
 def update_slot_counter(message):
@@ -68,6 +75,17 @@ def update_slot_counter(message):
         ok_count = counters.get("ok", "0")
         ng_count = counters.get("ng", "0")
 
+        if module_id == 5 and status == "OK":
+
+            line_key = get_line_key(line_id)
+            redis_client.hincrby(line_key, "achievement", 1)
+            achievement_count = redis_client.hgetall(line_key).get("achievement", "0")
+
+            client.publish(
+                MQTT_ACHIEVEMENT_TOPIC,
+                json.dumps({"line": line_id, "achievement": achievement_count}),
+            )
+
         # 組裝要發佈的資料並以 JSON 發佈到 MQTT
         payload = json.dumps(
             {
@@ -80,9 +98,9 @@ def update_slot_counter(message):
         )
         client.publish(MQTT_TOPIC, payload)
 
-        print(
-            f"Updated counter for {slot_key} - total={total}, ok={ok_count}, ng={ng_count}"
-        )
+        # print(
+        #     f"Updated counter for {slot_key} - total={total}, ok={ok_count}, ng={ng_count}"
+        # )
 
     except Exception as e:
         print(f"Error processing message: {e}")
